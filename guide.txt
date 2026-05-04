@@ -1,0 +1,51 @@
+✅ 1. Setup (ONLY ONCE)
+🔹 Install C++ Compiler (G++)
+
+If not installed:
+
+Windows (most common exam case)
+Install MinGW / TDM-GCC
+Add bin folder to PATH
+Verify:
+g++ --version
+Linux / Ubuntu
+sudo apt update
+sudo apt install g++
+🔹 Important: OpenMP Support
+
+All your C++ programs use OpenMP:
+
+BFS
+DFS
+Bubble Sort
+Merge Sort
+Reduction
+
+👉 So you must compile with -fopenmp
+
+✅ 2. How to Run C++ Programs (Notepad → Terminal)
+Step-by-step
+1. Write code in Notepad
+
+Save as:
+
+bfs.cpp
+dfs.cpp
+bubble.cpp
+merge.cpp
+reduction.cpp
+2. Open Terminal / CMD
+
+Go to folder:
+
+cd path_to_your_file
+3. Compile (IMPORTANT)
+g++ filename.cpp -fopenmp -o outputname
+Example:
+g++ bfs.cpp -fopenmp -o bfs
+4. Run
+./bfs
+
+(or on Windows)
+
+bfs
