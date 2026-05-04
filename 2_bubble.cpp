@@ -37,5 +37,7 @@ int main() {
 
     cout << "Parallel Bubble Sort Time: " << end - start << endl;
 
+    for (int x : arr) cout << x << " ";
+
     return 0;
 }
