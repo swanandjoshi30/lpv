@@ -80,11 +80,19 @@ int main() {
     end = omp_get_wtime();
     cout << "Sequential Merge Sort Time: " << end - start << endl;
 
+    // ✅ Print Sequential Sorted Array
+    for (int x : arr_seq) cout << x << " ";
+    cout << endl;
+
     // Parallel Merge Sort
     start = omp_get_wtime();
     parallel_merge_sort(arr_par);
     end = omp_get_wtime();
     cout << "Parallel Merge Sort Time: " << end - start << endl;
+
+    // ✅ Print Parallel Sorted Array
+    for (int x : arr_par) cout << x << " ";
+    cout << endl;
 
     return 0;
 }
