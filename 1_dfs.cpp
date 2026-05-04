@@ -3,58 +3,96 @@
 #include <omp.h>
 using namespace std;
 
-const int MAXN = 100000;
-vector<int> adj[MAXN + 5];
-bool visited[MAXN + 5];
+/* Merge Function */
+void merge(vector<int>& arr, int l, int m, int r) {
+    int n1 = m - l + 1;
+    int n2 = r - m;
 
-void dfs(int node) {
-    visited[node] = true;
-    cout << node << " ";
+    vector<int> L(n1), R(n2);
 
-    #pragma omp parallel for
-    for (int i = 0; i < adj[node].size(); i++) {
-        int next = adj[node][i];
+    for (int i = 0; i < n1; i++)
+        L[i] = arr[l + i];
 
-        bool do_visit = false;
+    for (int j = 0; j < n2; j++)
+        R[j] = arr[m + 1 + j];
 
-        #pragma omp critical
-        {
-            if (!visited[next]) {
-                visited[next] = true;
-                do_visit = true;
-            }
-        }
+    int i = 0, j = 0, k = l;
 
-        if (do_visit) {
-            dfs(next);
-        }
+    while (i < n1 && j < n2) {
+        if (L[i] <= R[j])
+            arr[k++] = L[i++];
+        else
+            arr[k++] = R[j++];
+    }
+
+    while (i < n1)
+        arr[k++] = L[i++];
+
+    while (j < n2)
+        arr[k++] = R[j++];
+}
+
+/* Sequential Merge Sort */
+void sequential_merge_sort(vector<int>& arr, int l, int r) {
+    if (l < r) {
+        int m = (l + r) / 2;
+        sequential_merge_sort(arr, l, m);
+        sequential_merge_sort(arr, m + 1, r);
+        merge(arr, l, m, r);
     }
 }
 
-int main() {
-    int n, m;
-    cin >> n >> m;
+/* Parallel Merge Sort */
+void parallel_merge_sort_util(vector<int>& arr, int l, int r) {
+    if (l < r) {
+        int m = (l + r) / 2;
 
-    for (int i = 0; i < m; i++) {
-        int u, v;
-        cin >> u >> v;
-        adj[u].push_back(v);
-        adj[v].push_back(u);
+        #pragma omp task shared(arr)
+        parallel_merge_sort_util(arr, l, m);
+
+        #pragma omp task shared(arr)
+        parallel_merge_sort_util(arr, m + 1, r);
+
+        #pragma omp taskwait
+        merge(arr, l, m, r);
     }
+}
 
-    int start;
-    cin >> start;
+void parallel_merge_sort(vector<int>& arr) {
+    #pragma omp parallel
+    {
+        #pragma omp single
+        parallel_merge_sort_util(arr, 0, arr.size() - 1);
+    }
+}
 
-    dfs(start);
+/* Main Function */
+int main() {
+    vector<int> arr = {5, 2, 9, 1, 7, 6, 8, 3, 4};
+    vector<int> arr_seq = arr;
+    vector<int> arr_par = arr;
+
+    double start, end;
+
+    // Sequential Merge Sort
+    start = omp_get_wtime();
+    sequential_merge_sort(arr_seq, 0, arr_seq.size() - 1);
+    end = omp_get_wtime();
+    cout << "Sequential Merge Sort Time: " << end - start << endl;
+
+    // ✅ Print Sequential Sorted Array
+    for (int x : arr_seq) cout << x << " ";
+    cout << endl;
+
+    // Parallel Merge Sort
+    start = omp_get_wtime();
+    parallel_merge_sort(arr_par);
+    end = omp_get_wtime();
+    cout << "Parallel Merge Sort Time: " << end - start << endl;
+
+    // ✅ Print Parallel Sorted Array
+    for (int x : arr_par) cout << x << " ";
+    cout << endl;
 
     return 0;
 }
-
-
-// INPUT:
-// 5 4
-// 1 2
-// 1 3
-// 2 4
-// 3 5
-// 1
