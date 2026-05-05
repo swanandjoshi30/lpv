@@ -1,3 +1,6 @@
+!nvidia-smi
+
+%%writefile add.cu
 #include <iostream>
 #include <cuda_runtime.h>
 using namespace std;
@@ -53,3 +56,7 @@ int main() {
 
     return 0;
 }
+
+
+!nvcc add.cu -o add
+!./add
