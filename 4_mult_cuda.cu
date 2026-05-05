@@ -1,3 +1,8 @@
+!nvidia-smi
+
+%%writefile mult.cu
+
+
 #include <iostream>
 #include <cuda_runtime.h>
 using namespace std;
@@ -64,3 +69,8 @@ int main() {
 
     return 0;
 }
+
+
+
+!nvcc mult.cu -o mult
+!./mult
